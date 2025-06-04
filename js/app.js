@@ -1,4 +1,5 @@
 let ingresosHTML="";
+let totalIngresos=0;
 
 let agregarDato = (event) =>{
     event.preventDefault();
@@ -11,10 +12,12 @@ let agregarDato = (event) =>{
         console.log("descripcion: "+ descripcion);
         console.log("valor :"+valor);
         if(tipo==="ingreso"){
-            cargarIngresos(descripcion, valor);
+            cargarIngresos(descripcion, Number(valor));
         }else if(tipo ==="egreso"){
-            //hace otra cosa
+            cargarEgreso(descripcion,Number(valor)); //trabajar en este
         }
+        document.getElementById("descripcion").value="";
+        document.getElementById("valor").value="";
     }else{
         alert("Debe completar todos los campos")
     }
@@ -23,7 +26,10 @@ let agregarDato = (event) =>{
 
 let cargarIngresos = (descripcion, valor) =>{
     ingresosHTML += crearIngresosHTML(descripcion,valor);
-    document.getElementById('lista-ingresos').innerHTML=ingresosHTML;
+    totalIngresos+=valor; //totalIngresos = totalIngresos + valor;
+    document.getElementById("ingresoTotal").textContent = formatearCLP(totalIngresos);
+    document.getElementById("presupuesto").textContent = formatearCLP(totalIngresos);//modificar luego
+    document.getElementById("lista-ingresos").innerHTML=ingresosHTML;
 }
 
 
@@ -31,7 +37,7 @@ let crearIngresosHTML=(descripcion,valor)=>{
     return `<div class="elemento limpiarEstilos">
                 <div class="elemento_descripcion">${descripcion}</div>
                 <div class="derecha limpiarEstilos">
-                    <div class="elemento_valor">${valor}</div>
+                    <div class="elemento_valor">${formatearCLP(valor)}</div>
                     <div class="elemento_eliminar">
                         <button class="elemento_eliminar--btn">
                             <ion-icon name="close-circle-outline"></ion-icon>
@@ -39,4 +45,12 @@ let crearIngresosHTML=(descripcion,valor)=>{
                     </div>
                 </div>
             </div>`;
+}
+
+function formatearCLP(numero) {
+    return new Intl.NumberFormat('es-CL', {
+        style: 'currency',
+        currency: 'CLP',
+        minimumFractionDigits: 0
+    }).format(numero);
 }
